@@ -38,10 +38,10 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 127.17.0.1 >> ~/.ssh/known_hosts
+          ssh-keyscan -H localhost >> ~/.ssh/known_hosts
 
           # Déploiement sur le serveur
-          ssh -o StrictHostKeyChecking=no your-username@127.17.0.1 << 'EOF'
+          ssh -o StrictHostKeyChecking=no your-username@localhost << 'EOF'
             # Tirer la dernière image Docker
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
             

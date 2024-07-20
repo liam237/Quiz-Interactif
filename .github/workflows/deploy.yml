@@ -8,7 +8,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,22 +23,35 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest .
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest .
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
 
       - name: Deploy to server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
+          # Configuration de SSH
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H your-server-ip >> ~/.ssh/known_hosts
+
+          # Déploiement sur le serveur
           ssh -o StrictHostKeyChecking=no your-username@your-server-ip << 'EOF'
+            # Tirer la dernière image Docker
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
-            docker stop $(docker ps -q --filter ancestor=${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest) || true
-            docker rm $(docker ps -q --filter ancestor=${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest) || true
+            
+            # Arrêter et supprimer les anciens conteneurs
+            container_ids=$(docker ps -q --filter "ancestor=${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest")
+            if [ -n "$container_ids" ]; then
+              docker stop $container_ids
+              docker rm $container_ids
+            fi
+            
+            # Exécuter le nouveau conteneur
             docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
           EOF

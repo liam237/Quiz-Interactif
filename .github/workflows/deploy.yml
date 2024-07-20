@@ -36,4 +36,10 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no your-username@your-server-ip 'docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest && docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest'
+          ssh-keyscan -H your-server-ip >> ~/.ssh/known_hosts
+          ssh -o StrictHostKeyChecking=no your-username@your-server-ip << 'EOF'
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
+            docker stop $(docker ps -q --filter ancestor=${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest) || true
+            docker rm $(docker ps -q --filter ancestor=${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest) || true
+            docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
+          EOF

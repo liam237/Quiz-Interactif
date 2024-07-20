@@ -41,7 +41,7 @@ jobs:
           ssh-keyscan -H localhost >> ~/.ssh/known_hosts
 
           # Déploiement sur le serveur
-          ssh -o StrictHostKeyChecking=no your-username@localhost << 'EOF'
+          ssh -o StrictHostKeyChecking=no liamouuu@localhost << 'EOF'
             # Tirer la dernière image Docker
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
             

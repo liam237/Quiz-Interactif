@@ -12,7 +12,11 @@
       <div id="start-container">
         <button id="start-button" onclick="startQuiz()">Jouer</button>
       </div>
-      <div id="question-container" style="display: none"></div>
+      <div
+        id="question-container"
+        style="display: none"
+        aria-live="polite"
+      ></div>
       <div id="options-container" style="display: none"></div>
       <div id="countdown" style="display: none"></div>
       <button id="next-button" onclick="nextQuestion()" style="display: none">
@@ -21,7 +25,7 @@
       <button id="restart-button" onclick="restartQuiz()" style="display: none">
         Recommencer
       </button>
-      <div id="result-container"></div>
+      <div id="result-container" aria-live="polite"></div>
     </div>
     <script src="script.js"></script>
   </body>

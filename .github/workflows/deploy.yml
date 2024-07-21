@@ -37,17 +37,18 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 4f5d-2a01-cb00-8408-1f00-f95b-286f-a324-d0af.ngrok-free.app >> ~/.ssh/known_hosts
+          # Ajouter l'adresse IP ou le domaine du serveur au fichier known_hosts
+          ssh-keyscan -H localhost >> ~/.ssh/known_hosts
 
       - name: Test SSH connection
         run: |
-          ssh -o StrictHostKeyChecking=no liamouuu@4f5d-2a01-cb00-8408-1f00-f95b-286f-a324-d0af.ngrok-free.app "echo 'SSH connection successful'"
+          ssh -o StrictHostKeyChecking=no your-username@your-server-address.com "echo 'SSH connection successful'"
 
       - name: Deploy to server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          ssh -o StrictHostKeyChecking=no liamouuu@4f5d-2a01-cb00-8408-1f00-f95b-286f-a324-d0af.ngrok-free.app << 'EOF'
+          ssh -o StrictHostKeyChecking=no liamouuu@localhost << 'EOF'
             # Tirer la dernière image Docker
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
             

@@ -30,17 +30,23 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
 
-      - name: Deploy to server
+      - name: Set up SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          # Configuration de SSH
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H 4f5d-2a01-cb00-8408-1f00-f95b-286f-a324-d0af.ngrok-free.app >> ~/.ssh/known_hosts
 
-          # Déploiement sur le serveur
+      - name: Test SSH connection
+        run: |
+          ssh -o StrictHostKeyChecking=no liamouuu@4f5d-2a01-cb00-8408-1f00-f95b-286f-a324-d0af.ngrok-free.app "echo 'SSH connection successful'"
+
+      - name: Deploy to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
           ssh -o StrictHostKeyChecking=no liamouuu@4f5d-2a01-cb00-8408-1f00-f95b-286f-a324-d0af.ngrok-free.app << 'EOF'
             # Tirer la dernière image Docker
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest

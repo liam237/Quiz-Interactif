@@ -1,33 +1,94 @@
 const quizQuestions = [
   {
-    question: "Quelle est la capitale de la France ?",
-    options: ["Paris", "Londres", "Berlin", "Madrid"],
-    correctAnswer: "Paris",
-  },
-  {
-    question: "Combien de continents y a-t-il sur Terre ?",
-    options: ["4", "5", "6", "7"],
-    correctAnswer: "7",
-  },
-  {
-    question: "Qui a peint la Mona Lisa ?",
+    question: "Qu'est-ce que la Business Intelligence (BI) ?",
     options: [
-      "Vincent van Gogh",
-      "Pablo Picasso",
-      "Leonardo da Vinci",
-      "Claude Monet",
+      "Un processus de collecte, d'analyse et de présentation des données",
+      "Une technique de hacking",
+      "Un logiciel de traitement de texte",
+      "Une méthode de marketing digital",
     ],
-    correctAnswer: "Leonardo da Vinci",
+    correctAnswer:
+      "Un processus de collecte, d'analyse et de présentation des données",
   },
   {
-    question: "Quelle est la plus grande planète du système solaire ?",
-    options: ["Terre", "Mars", "Jupiter", "Saturne"],
-    correctAnswer: "Jupiter",
+    question:
+      "Quel outil est principalement utilisé pour la création de rapports et de tableaux de bord dans Power BI ?",
+    options: ["Power BI Desktop", "Excel", "Word", "Outlook"],
+    correctAnswer: "Power BI Desktop",
   },
   {
-    question: "Quelle est la langue officielle du Brésil ?",
-    options: ["Espagnol", "Portugais", "Français", "Anglais"],
-    correctAnswer: "Portugais",
+    question: "Quelle est la fonction principale du service Power BI ?",
+    options: [
+      "Partager et collaborer sur des rapports et des tableaux de bord",
+      "Écrire des documents",
+      "Gérer des emails",
+      "Créer des feuilles de calcul",
+    ],
+    correctAnswer:
+      "Partager et collaborer sur des rapports et des tableaux de bord",
+  },
+  {
+    question:
+      "Quel langage de script est utilisé pour les transformations de données dans Power BI ?",
+    options: ["M", "Python", "SQL", "R"],
+    correctAnswer: "M",
+  },
+  {
+    question:
+      "Quelle est la principale utilisation de DAX (Data Analysis Expressions) dans Power BI ?",
+    options: [
+      "Créer des calculs et des mesures dans les modèles de données",
+      "Rédiger des emails",
+      "Dessiner des graphiques",
+      "Éditer des vidéos",
+    ],
+    correctAnswer:
+      "Créer des calculs et des mesures dans les modèles de données",
+  },
+  {
+    question:
+      "Quelle fonction de Power BI permet de programmer des mises à jour automatiques des données ?",
+    options: ["Scheduled Refresh", "Auto Update", "Data Sync", "Live Connect"],
+    correctAnswer: "Scheduled Refresh",
+  },
+  {
+    question:
+      "Quel est l'objectif principal de l'utilisation des tableaux de bord dans Power BI ?",
+    options: [
+      "Fournir une vue d'ensemble des métriques et des KPI",
+      "Écrire des scripts",
+      "Dessiner des images",
+      "Éditer des textes",
+    ],
+    correctAnswer: "Fournir une vue d'ensemble des métriques et des KPI",
+  },
+  {
+    question:
+      "Quel type de visuel est utilisé dans Power BI pour montrer des relations entre les données sur deux axes continus ?",
+    options: [
+      "Graphique en nuage de points",
+      "Graphique à barres",
+      "Histogramme",
+      "Diagramme circulaire",
+    ],
+    correctAnswer: "Graphique en nuage de points",
+  },
+  {
+    question:
+      "Comment appelle-t-on le processus de nettoyage et de structuration des données avant leur analyse dans Power BI ?",
+    options: [
+      "ETL (Extract, Transform, Load)",
+      "Data Scrubbing",
+      "Data Mining",
+      "Data Visualization",
+    ],
+    correctAnswer: "ETL (Extract, Transform, Load)",
+  },
+  {
+    question:
+      "Quel service permet de poser des questions en langage naturel et d'obtenir des réponses sous forme de visuels dans Power BI ?",
+    options: ["Q&A", "Ask Me", "Smart Query", "Data Insight"],
+    correctAnswer: "Q&A",
   },
 ];
 
@@ -37,10 +98,10 @@ let countdownTimer;
 let questionAnswered = false; // Indicateur pour savoir si la question a été répondue
 
 function startQuiz() {
-  document.getElementById("start-container").style.display = "none";
-  document.getElementById("question-container").style.display = "block";
-  document.getElementById("options-container").style.display = "block";
-  document.getElementById("countdown").style.display = "block";
+  document.getElementById("start-container").classList.add("hidden");
+  document.getElementById("question-container").classList.remove("hidden");
+  document.getElementById("options-container").classList.remove("hidden");
+  document.getElementById("countdown").classList.remove("hidden");
   loadQuestion();
 }
 
@@ -61,8 +122,8 @@ function loadQuestion() {
     optionsContainer.appendChild(button);
   });
 
-  nextButton.style.display = "none";
-  restartButton.style.display = "none";
+  nextButton.classList.add("hidden");
+  restartButton.classList.add("hidden");
   questionAnswered = false; // Réinitialiser l'indicateur
   startCountdown();
 }
@@ -91,7 +152,7 @@ function selectAnswer(selectedOption) {
       }
     );
 
-    document.getElementById("next-button").style.display = "block";
+    document.getElementById("next-button").classList.remove("hidden");
   }
 }
 
@@ -99,7 +160,6 @@ function nextQuestion() {
   // Si la question n'a pas été répondue, la marquer comme incorrecte
   if (!questionAnswered) {
     // Question non répondue, donc incorrecte
-    // Pas besoin d'augmenter le score ici
   }
 
   currentQuestionIndex++;
@@ -115,20 +175,20 @@ function showResults() {
   const restartButton = document.getElementById("restart-button");
   const resultContainer = document.getElementById("result-container");
 
-  document.getElementById("question-container").style.display = "none";
-  document.getElementById("options-container").style.display = "none";
-  document.getElementById("countdown").style.display = "none";
-  document.getElementById("next-button").style.display = "none";
+  document.getElementById("question-container").classList.add("hidden");
+  document.getElementById("options-container").classList.add("hidden");
+  document.getElementById("countdown").classList.add("hidden");
+  document.getElementById("next-button").classList.add("hidden");
 
   resultContainer.innerHTML = `Votre score est de ${score} sur ${quizQuestions.length}`;
-  restartButton.style.display = "block";
+  restartButton.classList.remove("hidden");
 }
 
 function restartQuiz() {
   currentQuestionIndex = 0;
   score = 0;
   document.getElementById("result-container").innerHTML = "";
-  document.getElementById("start-container").style.display = "block";
+  document.getElementById("start-container").classList.remove("hidden");
 }
 
 function startCountdown() {
@@ -144,11 +204,8 @@ function startCountdown() {
       clearInterval(countdownTimer);
       if (!questionAnswered) {
         // Question non répondue à temps, marquer comme incorrecte
-        // Pas besoin de mettre à jour le score ici
       }
       nextQuestion();
     }
   }, 1000);
 }
-
-// Initialiser la première question lorsque le quiz commence

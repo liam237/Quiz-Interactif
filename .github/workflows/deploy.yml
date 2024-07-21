@@ -1,4 +1,4 @@
-name: Deploy
+name: Déploiement
 
 on:
   push:
@@ -9,28 +9,32 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Récupérer le code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
+      - name: Configurer Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to Docker Hub
+      - name: Se connecter à Docker Hub
         uses: docker/login-action@v2
         with:
           registry: docker.io
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Build Docker image
+      - name: Construire l'image Docker
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest .
 
-      - name: Push Docker image
+      - name: Pousser l'image Docker
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
 
-      - name: Deploy to server
+      - name: Vérifier les permissions des fichiers SSH
+        run: |
+          ls -la ~/.ssh
+
+      - name: Déployer sur le serveur
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
@@ -38,20 +42,18 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+          ssh-keyscan -H abcdef123.ngrok.io >> ~/.ssh/known_hosts || true
 
           # Déploiement sur le serveur
-          ssh -o StrictHostKeyChecking=no liamouuu@localhost << 'EOF'
-            # Tirer la dernière image Docker
+          ssh -o StrictHostKeyChecking=no liamouuu@abcdef123.ngrok.io << 'EOF'
+            set -e
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
             
-            # Arrêter et supprimer les anciens conteneurs
             container_ids=$(docker ps -q --filter "ancestor=${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest")
             if [ -n "$container_ids" ]; then
               docker stop $container_ids
               docker rm $container_ids
             fi
             
-            # Exécuter le nouveau conteneur
-            docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
+            docker run -d -p 8080:80 ${{ secrets.DOCKER_HUB_USERNAME }}/quiz-interactif:latest
           EOF

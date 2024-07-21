@@ -42,7 +42,7 @@ jobs:
 
       - name: Test SSH connection
         run: |
-          ssh -o StrictHostKeyChecking=no your-username@your-server-address.com "echo 'SSH connection successful'"
+          ssh -o StrictHostKeyChecking=no liamouuu@localhost "echo 'SSH connection successful'"
 
       - name: Deploy to server
         env:
